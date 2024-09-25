@@ -1,8 +1,4 @@
-package Hilos.ejerc2.controller;
-
-
-
-
+package Hilos.ejercicio_1.ejerc2.controller;
 
 public class main {
 

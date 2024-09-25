@@ -1,4 +1,4 @@
-package ejercicio_1.ejerc3.controller;
+package Hilos.ejercicio_1.ejerc3.controller;
 
 public class main {
 

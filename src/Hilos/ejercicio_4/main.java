@@ -1,4 +1,4 @@
-package ejercicio_4;
+package Hilos.ejercicio_4;
 
 public class main {
 
