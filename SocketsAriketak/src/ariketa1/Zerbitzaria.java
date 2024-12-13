@@ -35,9 +35,9 @@ public class Zerbitzaria {
 				salida.writeUTF("“saludos desde el servidor al cliente num: " + i);
 
 				// Cerrar el socket
-				socketBezeroa.close();
 				salida.close();
 				entrada.close();
+				socketBezeroa.close();
 
 			}
 
