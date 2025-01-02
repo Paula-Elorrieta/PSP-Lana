@@ -2,8 +2,6 @@ package vista;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.util.HashSet;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,10 +11,9 @@ import modelo.Servidor;
 
 public class AliasVista extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private HashSet<String> aliasSet;
 
 	public AliasVista() {
-		setTitle("Introduce tu Alias");
+		setTitle("TXAT BEZEROA. Sarrera");
 		setSize(430, 294);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -30,24 +27,19 @@ public class AliasVista extends JFrame {
 		errorLabel.setBounds(56, 115, 311, 31);
 		errorLabel.setForeground(Color.RED);
 
-		aliasSet = new HashSet<>();
-		System.out.println(aliasSet);
-
 		JButton connectButton = new JButton("Conectar");
 		connectButton.setBounds(66, 157, 273, 45);
 		connectButton.addActionListener(e -> {
 			String alias = aliasField.getText().trim();
 			if (alias.isEmpty()) {
 				errorLabel.setText("nicknamea sartu behar duzu");
-			} else if (aliasSet.contains(alias)) {
-				errorLabel.setText("El alias ya está en uso");
 			} else {
 				Cliente cliente = new Cliente();
-				cliente.conectar("localhost", Servidor.port, alias);
-				aliasSet.add(alias);
+				cliente.konexioa("localhost", Servidor.port, alias);
 				dispose();
 			}
 		});
+
 		getContentPane().setLayout(null);
 
 		getContentPane().add(lblNicknameSartu);

@@ -41,7 +41,7 @@ public class ClienteVista extends JFrame {
 		JButton irtenButton = new JButton("Salir");
 		irtenButton.setBounds(404, 51, 108, 32);
 		irtenButton.addActionListener(e -> {
-			cliente.desconectar();
+			cliente.deskonexioa();
 			System.exit(0);
 		});
 		getContentPane().add(irtenButton);
@@ -50,8 +50,15 @@ public class ClienteVista extends JFrame {
 		enviarButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String mensaje = textField.getText().trim();
+
+				if (mensaje.equalsIgnoreCase("*") || mensaje.equalsIgnoreCase("Irten")) {
+					cliente.deskonexioa();
+					System.exit(0);
+					return;
+				}
+
 				if (!mensaje.isEmpty()) {
-					cliente.enviarMensaje(mensaje);
+					cliente.mezuaBidali(mensaje);
 					textArea.append(cliente.getAlias() + "> " + mensaje + "\n");
 					textField.setText("");
 				}

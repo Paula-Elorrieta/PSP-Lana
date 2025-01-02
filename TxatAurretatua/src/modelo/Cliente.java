@@ -1,5 +1,6 @@
 package modelo;
 
+import java.awt.EventQueue;
 import java.io.*;
 import java.net.*;
 import javax.swing.*;
@@ -8,11 +9,11 @@ import vista.*;
 
 public class Cliente {
 	private Socket socket;
-	private PrintWriter out;
-	private BufferedReader in;
-	private String alias;
+	private PrintWriter out; // Mezuak bidaltzeko
+	private BufferedReader in; // Mezuak jasotzeko
+	private String alias; // nickname
 
-	public void conectar(String host, int port, String alias) {
+	public void konexioa(String host, int port, String alias) {
 		this.alias = alias;
 		try {
 			socket = new Socket(host, port);
@@ -24,25 +25,47 @@ public class Cliente {
 			String respuesta = in.readLine();
 			if ("Konektatuta".equals(respuesta)) {
 				SwingUtilities.invokeLater(() -> new ClienteVista(this));
-			} else {
-				JOptionPane.showMessageDialog(null, "El servidor rechazó la conexión", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				desconectar();
+				// Mezuak entzuteko hari bat sortu bat sortu eta hasi
+				new Thread(() -> mezuakEntzun()).start();
 			}
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Error al conectar con el servidor: " + e.getMessage(), "Error",
+			JOptionPane.showMessageDialog(null, "Error konexioan egitean: " + e.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
-			desconectar();
+			deskonexioa();
 		}
 	}
 
-	public void enviarMensaje(String mensaje) {
+	// Metodo hau mezuak entzuteko erabiliko da, deskonexioan egiteko
+	private void mezuakEntzun() {
+		try {
+			String mensaje;
+			while (socket != null && !socket.isClosed() && (mensaje = in.readLine()) != null) {
+				if ("Deskonektatu".equals(mensaje)) {
+					SwingUtilities.invokeLater(() -> {
+						JOptionPane.showMessageDialog(null, "Zerbitzaria konexioa itzi du", "Deskonexioa",
+								JOptionPane.INFORMATION_MESSAGE);
+						deskonexioa();
+					});
+					break;
+				}
+			}
+		} catch (IOException e) {
+			// Socket itxi egin bada, errorea ez da erakutsiko
+			if (!socket.isClosed()) {
+				System.err.println("Error mezuak entzuterakoan: " + e.getMessage());
+			}
+		}
+	}
+
+	// Zerbitzarirako mezua bidaltzeko metodoa
+	public void mezuaBidali(String mensaje) {
 		if (out != null) {
 			out.println(alias + "> " + mensaje);
 		}
 	}
 
-	public void desconectar() {
+	// Socket itxi
+	public void deskonexioa() {
 		try {
 			if (out != null) {
 				out.println(alias + " se ha desconectado");
@@ -51,12 +74,22 @@ public class Cliente {
 				socket.close();
 			}
 		} catch (IOException e) {
-			System.err.println("Error al cerrar el cliente: " + e.getMessage());
+			System.out.println("Error konexioa: " + e.getMessage());
 		}
 	}
 
+	// Bezero bat instantzia sortzean, alias bista ikusiko da.
 	public static void main(String[] args) {
-		SwingUtilities.invokeLater(() -> new AliasVista());
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					AliasVista frame = new AliasVista();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	public String getAlias() {

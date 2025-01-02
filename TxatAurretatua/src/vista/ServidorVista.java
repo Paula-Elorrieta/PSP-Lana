@@ -10,6 +10,8 @@ import javax.swing.SwingUtilities;
 import modelo.Servidor;
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ServidorVista extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -61,29 +63,34 @@ public class ServidorVista extends JFrame {
 			}
 		}).start();
 
+		// Taulan bi klick egitean bezeroa deskonektatu
+		clientList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					String selectedAlias = clientList.getSelectedValue();
+					if (selectedAlias != null) {
+						servidor.bezeroaDeskonektatu(selectedAlias);
+					}
+				}
+			}
+		});
+
 	}
 
 	// Zerrendari bezero kudeaketa gehitu/ezabatu
 	public void bezeroGehitu(String alias) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				clientListModel.addElement(alias);
-			}
-		});
+		clientListModel.addElement(alias);
+
 	}
 
 	public void bezeroEzabatu(String alias) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				clientListModel.removeElement(alias);
-			}
-		});
+		clientListModel.removeElement(alias);
+
 	}
 
 	// Textu eremuan testua erakutsi
 	public void textuErakutsi(String evento) {
-		SwingUtilities.invokeLater(() -> textArea.append(evento + "\n"));
+		textArea.append(evento + "\n");
 	}
 }
